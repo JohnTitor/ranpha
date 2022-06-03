@@ -6,15 +6,27 @@ use crate::Opts;
 
 /// Generate QR code image.
 /// Currently, supports PNG only.
-pub fn generate_qr_code(opts: Opts, size: usize, path: &str) -> Result<(), Box<dyn Error>> {
+pub fn generate_qr_code(opts: &Opts, size: usize, path: &str) -> Result<(), Box<dyn Error>> {
     let config = Config::new(
-        opts.ssid,
-        opts.key,
-        validate_encryption_protocol(opts.encryption_protocol),
+        opts.ssid.clone(),
+        opts.key.clone(),
+        validate_encryption_protocol(opts.encryption_protocol.clone()),
     );
     let schema = build_schema(config);
-    // FIXME: flexible QRcodeEcc
-    qrcode_generator::to_png_to_file(schema, qrcode_generator::QrCodeEcc::High, size, path)?;
+
+    if path.ends_with(".png") {
+        qrcode_generator::to_png_to_file(schema, qrcode_generator::QrCodeEcc::High, size, path)?;
+    } else if path.ends_with(".svg") {
+        qrcode_generator::to_svg_to_file(
+            schema,
+            qrcode_generator::QrCodeEcc::High,
+            size,
+            None::<&str>,
+            path,
+        )?;
+    } else {
+        unreachable!("image format must be PNG or SVG.")
+    }
 
     Ok(())
 }

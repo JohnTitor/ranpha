@@ -6,47 +6,75 @@ mod validate;
 
 fn main() {
     let opts = opts();
-    crate::qr::generate_qr_code(opts, 256, "./qr.png").unwrap_or_else(|e| {
-        eprintln!("failed to generate QR code image: {e}");
-        std::process::exit(1);
-    });
+    let outdir = opts.output.clone();
+    let format = opts.image_format.to_lowercase();
+    let format = match format.as_str() {
+        "png" | "svg" => format,
+        _ => unreachable!("image format is invalid, only png or svg is invalid"),
+    };
+    crate::qr::generate_qr_code(&opts, opts.size, &format!("{outdir}qr.{format}")).unwrap_or_else(
+        |e| {
+            eprintln!("failed to generate QR code image: {e}");
+            std::process::exit(1);
+        },
+    );
 }
 
-// FIXME: Accept some more flags, e.g.:
-// - generated data formats
-// - output dir
-// - size
 #[derive(Clone, Debug)]
 pub struct Opts {
     encryption_protocol: String,
     ssid: String,
     key: String,
+    image_format: String,
+    output: String,
+    size: usize,
 }
 
 fn opts() -> Opts {
     let encryption_protocol = short('p')
         .long("protocol")
-        .help(
-            "encryption protocol, WPA2, WPA, or WEP is valid (case-insensitive),\n\
-            any other inputs are treated as no key",
-        )
+        .help("encryption protocol, only WPA2, WPA, or WEP is valid (case-insensitive).")
         .argument("PROTOCOL")
         .from_str();
     let ssid = short('s')
         .long("ssid")
-        .help("SSID of your network")
+        .help("SSID of your network.")
         .argument("SSID")
         .from_str();
     let key = short('k')
         .long("key")
-        .help("key of your network")
+        .help("key of your network. Blank value will be used if not specified.")
         .argument("KEY")
+        .fallback("".to_string())
+        .from_str();
+    let image_format = short('f')
+        .long("format")
+        .help(
+            "image format of generated image. Only PNG or SVG is valid (case-insensitive). \
+            PNG will be used if not specified.",
+        )
+        .argument("IMAGE_FORMAT")
+        .fallback("PNG".to_string())
+        .from_str();
+    let output = short('o')
+        .long("output")
+        .help("output path of generated image. The current dir will be used if not specified.")
+        .argument("OUT_DIR")
+        .fallback("./".to_string())
+        .from_str();
+    let size = long("size")
+        .help("size of generated image (px). 128 is used if not specified.")
+        .argument("SIZE")
+        .fallback("128".to_string())
         .from_str();
 
     let parser = construct!(Opts {
         encryption_protocol,
         ssid,
-        key
+        key,
+        image_format,
+        output,
+        size,
     });
 
     Info::default()

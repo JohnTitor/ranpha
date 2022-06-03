@@ -5,7 +5,7 @@ pub fn validate_encryption_protocol(protocol: String) -> String {
     let protocol = protocol.to_uppercase();
     match protocol.as_str() {
         "WPA2" | "WPA" | "WEP" => protocol,
-        _ => "nopass".to_string(),
+        _ => unreachable!("protocol is invalid, must be WPA2, WPA, or WEP"),
     }
 }
 
