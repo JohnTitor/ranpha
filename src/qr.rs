@@ -1,10 +1,12 @@
+use std::error::Error;
+
 use crate::config::Config;
 use crate::validate::{escape_special_characters, validate_encryption_protocol};
 use crate::Opts;
 
 /// Generate QR code image.
 /// Currently, supports PNG only.
-pub fn generate_qr_code(opts: Opts, size: usize, path: &str) {
+pub fn generate_qr_code(opts: Opts, size: usize, path: &str) -> Result<(), Box<dyn Error>> {
     let config = Config::new(
         opts.ssid,
         opts.key,
@@ -12,8 +14,9 @@ pub fn generate_qr_code(opts: Opts, size: usize, path: &str) {
     );
     let schema = build_schema(config);
     // FIXME: flexible QRcodeEcc
-    qrcode_generator::to_png_to_file(schema, qrcode_generator::QrCodeEcc::High, size, path)
-        .unwrap();
+    qrcode_generator::to_png_to_file(schema, qrcode_generator::QrCodeEcc::High, size, path)?;
+
+    Ok(())
 }
 
 /// Build a schema for QR Code.

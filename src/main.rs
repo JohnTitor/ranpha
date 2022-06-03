@@ -6,12 +6,16 @@ mod validate;
 
 fn main() {
     let opts = opts();
-    crate::qr::generate_qr_code(opts, 256, "./qr.png");
+    crate::qr::generate_qr_code(opts, 256, "./qr.png").unwrap_or_else(|e| {
+        eprintln!("failed to generate QR code image: {e}");
+        std::process::exit(1);
+    });
 }
 
 // FIXME: Accept some more flags, e.g.:
 // - generated data formats
 // - output dir
+// - size
 #[derive(Clone, Debug)]
 pub struct Opts {
     encryption_protocol: String,
