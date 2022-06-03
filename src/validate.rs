@@ -1,3 +1,6 @@
+/// Validate encryption protocol.
+/// Currently, only accepts WPA2, WPA, or WEP.
+/// Any other inputs are treated as `nopass`.
 pub fn validate_encryption_protocol(protocol: String) -> String {
     let protocol = protocol.to_uppercase();
     match protocol.as_str() {

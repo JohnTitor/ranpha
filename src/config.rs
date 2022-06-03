@@ -1,3 +1,4 @@
+/// Config to generate QR code schema.
 pub struct Config {
     pub ssid: String,
     pub key: String,
