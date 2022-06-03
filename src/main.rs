@@ -1,45 +1,49 @@
-const SSID_DESC: &str = "network name (SSID)";
-const PSK_DESC: &str = "network key (password)";
-use crate::config::Config;
+use bpaf::*;
+
 mod config;
+mod qr;
+mod validate;
 
 fn main() {
-    let _ = generateQrCode();
+    let opts = opts();
+    crate::qr::generate_qr_code(opts, 256, "./qr.png");
 }
 
-/// Build a schema for QR Code.
-///
-/// # Schema
-///
-/// ```text
-/// WIFI:T:WPA;S:mynetwork;P:mypass;;
-/// ^    ^     ^           ^
-/// |    |     |           |
-/// |    |     |           +-- WPA key
-/// |    |     +-- encryption type
-/// |    +-- ESSID
-/// +-- code type
-/// ```
-fn buildSchema(config: Config) -> String {
-    format!("WIFI:T:{};S:{};P:{};;", escapeSpecialCharacters(&config.encryption), escapeSpecialCharacters(&config.ssid), escapeSpecialCharacters(&config.key))
+#[derive(Clone, Debug)]
+pub struct Opts {
+    encryption_protocol: String,
+    ssid: String,
+    key: String,
 }
 
-const SPECIAL_CHARACTERS: [&'static str; 5] = ["\\", ";", ",", "\"", ":"];
+fn opts() -> Opts {
+    let encryption_protocol = short('p')
+        .long("protocol")
+        .help(
+            "encryption protocol, WPA2, WPA, or WEP is valid (case-insensitive),\n\
+            any other inputs are treated as no key",
+        )
+        .argument("PROTOCOL")
+        .from_str();
+    let ssid = short('s')
+        .long("ssid")
+        .help("SSID of your network")
+        .argument("SSID")
+        .from_str();
+    let key = short('k')
+        .long("key")
+        .help("key of your network")
+        .argument("KEY")
+        .from_str();
 
-/// Escape some special characters.
-///
-/// Ref. https://github.com/zxing/zxing/wiki/Barcode-Contents#wi-fi-network-config-android-ios-11
-fn escapeSpecialCharacters(string: &str) -> String {
-    let mut string = string.clone();
-    for c in SPECIAL_CHARACTERS {
-        string.replace(c, &format!("\\{c}"));
-    }
+    let parser = construct!(Opts {
+        encryption_protocol,
+        ssid,
+        key
+    });
 
-    string.to_string()
-}
-
-pub fn generateQrCode() {
-    let config = Config::new("".to_string(), "".to_string(), "".to_string());
-    let foo = buildSchema(config);
-    qrcode_generator::to_png_to_file(foo, qrcode_generator::QrCodeEcc::High, 256, "./qr.png").unwrap();
+    Info::default()
+        .descr("Generate QR code of your Wi-FI network")
+        .for_parser(parser)
+        .run()
 }
