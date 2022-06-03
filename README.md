@@ -14,3 +14,10 @@ Available options:
         --size <SIZE>            size of generated image (px). 128 will be used if not specified.
     -h, --help                   Prints help information
 ```
+
+## Installation
+
+Install via Cargo:
+```
+cargo install ranpha
+```
