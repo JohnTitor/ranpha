@@ -1,6 +1,6 @@
 # ranpha
 
-Generate QR code of your Wi-FI network.
+Generate QR code of your Wi-Fi network.
 
 ```
 Usage: -p PROTOCOL -s SSID -k KEY
