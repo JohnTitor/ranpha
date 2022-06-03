@@ -1,4 +1,4 @@
-# Ranpha
+# ranpha
 
 Generate QR code of your Wi-FI network.
 
