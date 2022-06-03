@@ -63,7 +63,7 @@ fn opts() -> Opts {
         .fallback("./".to_string())
         .from_str();
     let size = long("size")
-        .help("size of generated image (px). 128 is used if not specified.")
+        .help("size of generated image (px). 128 will be used if not specified.")
         .argument("SIZE")
         .fallback("128".to_string())
         .from_str();

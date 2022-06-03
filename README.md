@@ -11,6 +11,6 @@ Available options:
     -k, --key <KEY>              key of your network. "nopass" will be used if not specified.
     -f, --format <IMAGE_FORMAT>  image format of generated image. Only PNG or SVG is valid (case-insensitive). PNG will be used if not specified.
     -o, --output <OUT_DIR>       output path of generated image. The current dir will be used if not specified.
-        --size <SIZE>            size of generated image (px). 128 is used if not specified.
+        --size <SIZE>            size of generated image (px). 128 will be used if not specified.
     -h, --help                   Prints help information
 ```
