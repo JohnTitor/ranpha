@@ -9,6 +9,9 @@ fn main() {
     crate::qr::generate_qr_code(opts, 256, "./qr.png");
 }
 
+// FIXME: Accept some more flags, e.g.:
+// - generated data formats
+// - output dir
 #[derive(Clone, Debug)]
 pub struct Opts {
     encryption_protocol: String,
