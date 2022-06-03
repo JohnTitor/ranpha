@@ -43,9 +43,9 @@ fn opts() -> Opts {
         .from_str();
     let key = short('k')
         .long("key")
-        .help("key of your network. Blank value will be used if not specified.")
+        .help("key of your network. \"nopass\" will be used if not specified.")
         .argument("KEY")
-        .fallback("".to_string())
+        .fallback("nopass".to_string())
         .from_str();
     let image_format = short('f')
         .long("format")
