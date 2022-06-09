@@ -19,16 +19,11 @@ use crate::Opts;
 /// +-- code type
 /// ```
 fn build_schema(config: Config) -> String {
-    let key = if config.key.is_empty() {
-        "nopass"
-    } else {
-        &config.key
-    };
     format!(
         "WIFI:T:{};S:{};P:{};;",
         config.encryption,
         escape_special_characters(&config.ssid),
-        escape_special_characters(key),
+        escape_special_characters(config.key.as_ref().map_or("nopass", |key| key)),
     )
 }
 
@@ -60,17 +55,21 @@ mod tests {
 
     #[test]
     fn test_build_schema() {
-        let config = Config::new("myssid".to_string(), "mykey".to_string(), Protocol::Wpa2);
+        let config = Config::new(
+            "myssid".to_string(),
+            Some("mykey".to_string()),
+            Protocol::Wpa2,
+        );
         let got = build_schema(config);
         let want = "WIFI:T:WPA2;S:myssid;P:mykey;;".to_string();
         assert_eq!(want, got);
 
-        let config = Config::new("myssid".to_string(), "".to_string(), Protocol::Wep);
+        let config = Config::new("myssid".to_string(), None, Protocol::Wep);
         let got = build_schema(config);
         let want = "WIFI:T:WEP;S:myssid;P:nopass;;".to_string();
         assert_eq!(want, got);
 
-        let config = Config::new("myssid".to_string(), "nopass".to_string(), Protocol::Wpa);
+        let config = Config::new("myssid".to_string(), None, Protocol::Wpa);
         let got = build_schema(config);
         let want = "WIFI:T:WPA;S:myssid;P:nopass;;".to_string();
         assert_eq!(want, got);

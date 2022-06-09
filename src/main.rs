@@ -25,7 +25,7 @@ fn main() {
 pub struct Opts {
     encryption_protocol: Protocol,
     ssid: String,
-    key: String,
+    key: Option<String>,
     image_format: String,
     output: String,
     size: usize,
@@ -45,7 +45,7 @@ fn opts() -> Opts {
         .long("key")
         .help("key of your network. \"nopass\" will be used if not specified.")
         .argument("KEY")
-        .fallback("nopass".to_string());
+        .optional();
     let image_format = short('f')
         .long("format")
         .help(
