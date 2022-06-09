@@ -34,19 +34,16 @@ fn opts() -> Opts {
     let encryption_protocol = short('p')
         .long("protocol")
         .help("encryption protocol, only WPA2, WPA, or WEP is valid (case-insensitive).")
-        .argument("PROTOCOL")
-        .from_str();
+        .argument("PROTOCOL");
     let ssid = short('s')
         .long("ssid")
         .help("SSID of your network.")
-        .argument("SSID")
-        .from_str();
+        .argument("SSID");
     let key = short('k')
         .long("key")
         .help("key of your network. \"nopass\" will be used if not specified.")
         .argument("KEY")
-        .fallback("nopass".to_string())
-        .from_str();
+        .fallback("nopass".to_string());
     let image_format = short('f')
         .long("format")
         .help(
@@ -54,14 +51,12 @@ fn opts() -> Opts {
             PNG will be used if not specified.",
         )
         .argument("IMAGE_FORMAT")
-        .fallback("PNG".to_string())
-        .from_str();
+        .fallback("PNG".to_string());
     let output = short('o')
         .long("output")
         .help("output path of generated image. The current dir will be used if not specified.")
         .argument("OUT_DIR")
-        .fallback("./".to_string())
-        .from_str();
+        .fallback("./".to_string());
     let size = long("size")
         .help("size of generated image (px). 128 will be used if not specified.")
         .argument("SIZE")
