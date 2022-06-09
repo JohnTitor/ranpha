@@ -8,6 +8,7 @@ description = "Generate QR code of your Wi-FI network."
 repository = "https://github.com/JohnTitor/ranpha"
 homepage = "https://github.com/JohnTitor/ranpha"
 documentation = "https://docs.rs/ranpha"
+include = ["src/**/*", "LICENSE-*", "README.md"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
