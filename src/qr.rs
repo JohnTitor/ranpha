@@ -2,7 +2,7 @@ use qrcode_generator::QrCodeEcc;
 use std::error::Error;
 
 use crate::config::Config;
-use crate::validate::{escape_special_characters, validate_encryption_protocol};
+use crate::validate::escape_special_characters;
 use crate::Opts;
 
 /// Build a schema for QR Code.
@@ -19,7 +19,7 @@ use crate::Opts;
 /// +-- code type
 /// ```
 fn build_schema(config: Config) -> String {
-    let key = if config.encryption == "nopass" || config.key.is_empty() {
+    let key = if config.key.is_empty() {
         "nopass"
     } else {
         &config.key
@@ -38,7 +38,7 @@ pub fn generate_qr_code(opts: &Opts, size: usize, path: &str) -> Result<(), Box<
     let config = Config::new(
         opts.ssid.clone(),
         opts.key.clone(),
-        validate_encryption_protocol(opts.encryption_protocol.clone()),
+        opts.encryption_protocol,
     );
     let schema = build_schema(config);
 
@@ -56,28 +56,21 @@ pub fn generate_qr_code(opts: &Opts, size: usize, path: &str) -> Result<(), Box<
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::validate::Protocol;
 
     #[test]
     fn test_build_schema() {
-        let config = Config::new(
-            "myssid".to_string(),
-            "mykey".to_string(),
-            "WPA2".to_string(),
-        );
+        let config = Config::new("myssid".to_string(), "mykey".to_string(), Protocol::Wpa2);
         let got = build_schema(config);
         let want = "WIFI:T:WPA2;S:myssid;P:mykey;;".to_string();
         assert_eq!(want, got);
 
-        let config = Config::new("myssid".to_string(), "".to_string(), "WEP".to_string());
+        let config = Config::new("myssid".to_string(), "".to_string(), Protocol::Wep);
         let got = build_schema(config);
         let want = "WIFI:T:WEP;S:myssid;P:nopass;;".to_string();
         assert_eq!(want, got);
 
-        let config = Config::new(
-            "myssid".to_string(),
-            "nopass".to_string(),
-            "WPA".to_string(),
-        );
+        let config = Config::new("myssid".to_string(), "nopass".to_string(), Protocol::Wpa);
         let got = build_schema(config);
         let want = "WIFI:T:WPA;S:myssid;P:nopass;;".to_string();
         assert_eq!(want, got);

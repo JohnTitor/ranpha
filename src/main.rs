@@ -1,4 +1,5 @@
 use bpaf::*;
+use validate::Protocol;
 
 mod config;
 mod qr;
@@ -22,7 +23,7 @@ fn main() {
 
 #[derive(Clone, Debug)]
 pub struct Opts {
-    encryption_protocol: String,
+    encryption_protocol: Protocol,
     ssid: String,
     key: String,
     image_format: String,
@@ -34,7 +35,8 @@ fn opts() -> Opts {
     let encryption_protocol = short('p')
         .long("protocol")
         .help("encryption protocol, only WPA2, WPA, or WEP is valid (case-insensitive).")
-        .argument("PROTOCOL");
+        .argument("PROTOCOL")
+        .from_str::<Protocol>();
     let ssid = short('s')
         .long("ssid")
         .help("SSID of your network.")
