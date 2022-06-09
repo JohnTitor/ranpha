@@ -35,6 +35,33 @@ impl std::fmt::Display for Protocol {
     }
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum ImageFormat {
+    Png,
+    Svg,
+}
+
+impl std::fmt::Display for ImageFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Png => write!(f, "png"),
+            Self::Svg => write!(f, "svg"),
+        }
+    }
+}
+
+impl FromStr for ImageFormat {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "SVG" => Ok(Self::Svg),
+            "PNG" => Ok(Self::Png),
+            _ => Err("Image format is invalid, must be PNG or SVG"),
+        }
+    }
+}
+
 /// Escape some special characters.
 ///
 /// See also the link on `SPECIAL_CHARACTERS` const.

@@ -2,7 +2,7 @@ use qrcode_generator::QrCodeEcc;
 use std::error::Error;
 
 use crate::config::Config;
-use crate::validate::escape_special_characters;
+use crate::validate::{escape_special_characters, ImageFormat};
 use crate::Opts;
 
 /// Build a schema for QR Code.
@@ -37,12 +37,11 @@ pub fn generate_qr_code(opts: &Opts, size: usize, path: &str) -> Result<(), Box<
     );
     let schema = build_schema(config);
 
-    if path.ends_with(".png") {
-        qrcode_generator::to_png_to_file(schema, QrCodeEcc::High, size, path)?;
-    } else if path.ends_with(".svg") {
-        qrcode_generator::to_svg_to_file(schema, QrCodeEcc::High, size, None::<&str>, path)?;
-    } else {
-        unreachable!("image format must be PNG or SVG.")
+    match opts.image_format {
+        ImageFormat::Png => qrcode_generator::to_png_to_file(schema, QrCodeEcc::High, size, path)?,
+        ImageFormat::Svg => {
+            qrcode_generator::to_svg_to_file(schema, QrCodeEcc::High, size, None::<&str>, path)?
+        }
     }
 
     Ok(())

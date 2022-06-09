@@ -1,5 +1,5 @@
 use bpaf::*;
-use validate::Protocol;
+use validate::{ImageFormat, Protocol};
 
 mod config;
 mod qr;
@@ -8,11 +8,7 @@ mod validate;
 fn main() {
     let opts = opts();
     let outdir = opts.output.clone();
-    let format = opts.image_format.to_lowercase();
-    let format = match format.as_str() {
-        "png" | "svg" => format,
-        _ => unreachable!("image format is invalid, only png or svg is invalid"),
-    };
+    let format = opts.image_format;
     crate::qr::generate_qr_code(&opts, opts.size, &format!("{outdir}qr.{format}")).unwrap_or_else(
         |e| {
             eprintln!("failed to generate QR code image: {e}");
@@ -26,7 +22,7 @@ pub struct Opts {
     encryption_protocol: Protocol,
     ssid: String,
     key: Option<String>,
-    image_format: String,
+    image_format: ImageFormat,
     output: String,
     size: usize,
 }
@@ -53,7 +49,8 @@ fn opts() -> Opts {
             PNG will be used if not specified.",
         )
         .argument("IMAGE_FORMAT")
-        .fallback("PNG".to_string());
+        .from_str::<ImageFormat>()
+        .fallback(ImageFormat::Png);
     let output = short('o')
         .long("output")
         .help("output path of generated image. The current dir will be used if not specified.")
