@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+
+    name: build and test
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup toolchain
+        run: rustup override set stable
+
+      - run: cargo check
+
+      - run: cargo test
