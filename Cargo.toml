@@ -13,5 +13,5 @@ include = ["src/**/*", "LICENSE-*", "README.md"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bpaf = "0.4"
+bpaf = "0.5"
 qrcode-generator = "4.1.6"

@@ -45,8 +45,8 @@ fn opts() -> Opts {
     let image_format = short('f')
         .long("format")
         .help(
-            "image format of generated image. Only PNG or SVG is valid (case-insensitive). \
-            PNG will be used if not specified.",
+            "image format of generated image. Only PNG or SVG is valid (case-insensitive).
+PNG will be used if not specified.",
         )
         .argument("IMAGE_FORMAT")
         .from_str::<ImageFormat>()
@@ -62,17 +62,15 @@ fn opts() -> Opts {
         .from_str::<usize>()
         .fallback(128);
 
-    let parser = construct!(Opts {
+    construct!(Opts {
         encryption_protocol,
         ssid,
         key,
         image_format,
         output,
         size,
-    });
-
-    Info::default()
-        .descr("Generate QR code of your Wi-FI network")
-        .for_parser(parser)
-        .run()
+    })
+    .to_options()
+    .descr("Generate QR code of your Wi-FI network")
+    .run()
 }
